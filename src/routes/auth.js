@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
-const { generalLimiter, sensitiveLimiter } = require('../middleware/rateLimiter');
+const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 

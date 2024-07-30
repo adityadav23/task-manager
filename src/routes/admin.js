@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 const userController = require('../controllers/userController');
 const taskController = require('../controllers/taskController');
-const { adminLimiter, sensitiveLimiter } = require('../middleware/rateLimiter');
+const { adminLimiter } = require('../middleware/rateLimiter');
 
 // Apply admin rate limiter to all admin routes
 const router = express.Router();
