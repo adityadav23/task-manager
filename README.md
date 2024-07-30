@@ -36,7 +36,7 @@ A comprehensive RESTful API for a task management system using Node.js. The API 
    cd task-management-api
 
 2. Install Dependencies
-  ``` npm install```
+    npm install
 
 3. Create .env file and add below variables
   
@@ -58,8 +58,11 @@ A comprehensive RESTful API for a task management system using Node.js. The API 
    TWILIO_PHONE_NUMBER=your_twilio_phone_number
 
 5. Start development server
+   
    npm run dev
-6. Run tests
+   
+7. Run tests
+
    npm test
 
  ##Usage
