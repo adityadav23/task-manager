@@ -1,5 +1,5 @@
 const sgMail = require('../config/sendGridConfig');
-// const twilioClient = require('../config/twilioConfig');
+const twilioClient = require('../config/twilioConfig');
 const User = require('../models/User');
 
 // Send an email notification
