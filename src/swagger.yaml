@@ -1,0 +1,434 @@
+openapi: 3.0.0
+info:
+  title: Task Management API
+  description: API for managing tasks and users with authentication, role-based access, and notifications.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:3000/api'
+    description: Local server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login a user
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        '401':
+          description: Invalid credentials
+
+  /auth/refresh-token:
+    post:
+      summary: Refresh access token using a refresh token
+      requestBody:
+        description: Refresh token to generate a new access token
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Successful token refresh
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '400':
+          description: Bad request
+        '403':
+          description: Invalid refresh token
+
+  /auth/logout:
+    post:
+      summary: Logout a user and invalidate the refresh token
+      requestBody:
+        description: Refresh token to invalidate
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '204':
+          description: Successfully logged out
+        '400':
+          description: Bad request
+
+  /user/profile:
+    get:
+      summary: Get user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+
+  /tasks:
+    get:
+      summary: Retrieve a list of tasks
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: priority
+          in: query
+          schema:
+            type: string
+        - name: assignedTo
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create a new task
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Task details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+
+  /tasks/{taskId}:
+    get:
+      summary: Get details of a specific task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+        '401':
+          description: Unauthorized
+
+    put:
+      summary: Update a specific task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated task details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+        '404':
+          description: Task not found
+        '401':
+          description: Unauthorized
+
+    delete:
+      summary: Delete a specific task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+        '401':
+          description: Unauthorized
+
+  /tasks/{taskId}/assign:
+    post:
+      summary: Assign a task to a user
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User ID to assign the task to
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignedTo:
+                  type: string
+      responses:
+        '200':
+          description: Task assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+        '404':
+          description: Task not found
+        '401':
+          description: Unauthorized
+
+  /tasks/{taskId}/status:
+    put:
+      summary: Update the status of a task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New task status
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Task status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+        '404':
+          description: Task not found
+        '401':
+          description: Unauthorized
+
+  /notifications/preferences:
+    get:
+      summary: Get notification preferences
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notification preferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: boolean
+                  sms:
+                    type: boolean
+        '401':
+          description: Unauthorized
+
+    put:
+      summary: Update notification preferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: New notification preferences
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                sms:
+                  type: boolean
+      responses:
+        '200':
+          description: Preferences updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: boolean
+                  sms:
+                    type: boolean
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+  /analytics/tasks:
+    get:
+      summary: Get task statistics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completed:
+                    type: integer
+                  pending:
+                    type: integer
+                  overdue:
+                    type: integer
+        '401':
+          description: Unauthorized
+
+  /analytics/tasks/user/{userId}:
+    get:
+      summary: Get task completion statistics by user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task completion statistics for the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completed:
+                    type: integer
+                  pending:
+                    type: integer
+                  overdue:
+                    type: integer
+        '404':
+          description: User not found
+        '401':
+          description: Unauthorized
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        priority:
+          type: string
+        status:
+          type: string
+        createdBy:
+          type: string
+        assignedTo:
+          type: string
+
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
