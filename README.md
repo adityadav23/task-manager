@@ -42,17 +42,24 @@ A comprehensive RESTful API for a task management system using Node.js. The API 
   
    PORT=3000
    JWT_SECRET=your_jwt_secret
+   
    MONGODB_URI=mongodb://localhost:27017/taskmanager
+
    EMAIL_USERNAME=your_email@gmail.com
+
    EMAIL_PASSWORD=your_email_password
+
    SENDGRID_API_KEY=your_sendgrid_api_key
+
    TWILIO_ACCOUNT_SID=your_twilio_account_sid
+
    TWILIO_AUTH_TOKEN=your_twilio_auth_token
+
    TWILIO_PHONE_NUMBER=your_twilio_phone_number
 
-4. Start development server
+5. Start development server
    npm run dev
-5. Run tests
+6. Run tests
    npm test
 
  ##Usage
