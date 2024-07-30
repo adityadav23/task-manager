@@ -3,7 +3,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const checkRole = require('../middleware/roleMiddleware');
 const taskController = require('../controllers/taskController');
 const userController = require('../controllers/userController');
-const {  sensitiveLimiter } = require('../middleware/rateLimiter');
+const { sensitiveLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
