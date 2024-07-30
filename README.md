@@ -55,7 +55,7 @@ A comprehensive RESTful API for a task management system using Node.js. The API 
 5. Run tests
    npm test
 
-6. ##Usage
+ ##Usage
 
    Authentication
     User Registration
